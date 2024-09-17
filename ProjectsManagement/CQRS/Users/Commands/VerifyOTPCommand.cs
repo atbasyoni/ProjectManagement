@@ -10,15 +10,17 @@ namespace ProjectsManagement.CQRS.Users.Commands
     public class VerifyOTPCommandHandler : IRequestHandler<VerifyOTPCommand, ResultDTO>
     {
         IRepository<User> _userRepository;
+
         public VerifyOTPCommandHandler(IRepository<User> userRepository)
         {
             _userRepository = userRepository;
         }
+
         public async Task<ResultDTO> Handle(VerifyOTPCommand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.FirstAsyncWithTracking(u => u.Email == request.Email);
 
-            if (user == null || (user.OTPExpiration != null && user.OTPExpiration < DateTime.Now) || (user.OTP != null && user.OTP != request.OTP))
+            if (user is null || (user.OTPExpiration is not null && user.OTPExpiration < DateTime.Now) || (user.OTP is not null && user.OTP != request.OTP))
             {
                 return ResultDTO.Faliure("Invalid user or Expired Code!");
             }
@@ -26,7 +28,9 @@ namespace ProjectsManagement.CQRS.Users.Commands
             user.OTP = null;
             user.OTPExpiration = null;
             user.IsVerified = true;
+
             await _userRepository.SaveChangesAsync();
+
             return ResultDTO.Sucess(null, "Your account has been varefied successfully!");
         }
     }

@@ -24,7 +24,7 @@ namespace ProjectsManagement.CQRS.Users.Commands
             var passwordChangeRequest = await _passwordChangeRequestRepository
                       .FirstAsyncWithTracking(p => p.IsDeleted == false);
 
-            if (passwordChangeRequest == null)
+            if (passwordChangeRequest is null)
             {
                 return ResultDTO.Faliure("Invalid reset token.");
             }
@@ -41,9 +41,9 @@ namespace ProjectsManagement.CQRS.Users.Commands
                 return ResultDTO.Faliure("Expired reset token.");
             }
          
-
             var user = await _userRepository.FirstAsyncWithTracking(u => u.Email == request.ResetPasswordDTO.Email && u.ID==passwordChangeRequest.UserID);
-            if (user == null)
+            
+            if (user is null)
             {
                 return ResultDTO.Faliure("User or email not found.");
             }
@@ -51,7 +51,6 @@ namespace ProjectsManagement.CQRS.Users.Commands
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.ResetPasswordDTO.NewPassword);
             await _userRepository.SaveChangesAsync();
 
-            // remove the password change request record
             await _passwordChangeRequestRepository.DeleteAsync(passwordChangeRequest);
             await _passwordChangeRequestRepository.SaveChangesAsync();
 

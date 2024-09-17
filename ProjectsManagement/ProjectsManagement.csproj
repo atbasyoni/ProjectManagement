@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CQRS\Projects\Queries\" />
     <Folder Include="CQRS\Users\Queries\" />
   </ItemGroup>
 

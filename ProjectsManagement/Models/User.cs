@@ -13,7 +13,10 @@
         public string? OTP { get; set; }
         public DateTime? OTPExpiration { get; set; }
         public bool IsVerified { get; set; } = false;
+
+        public ICollection<Tasks> Tasks { get; set; }
         public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<UserProject> UserProjects { get; set; }
         public ICollection<PasswordChangeRequest> PasswordChangeRequests { get; set;}
     }
 }

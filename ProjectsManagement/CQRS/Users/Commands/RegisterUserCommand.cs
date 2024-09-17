@@ -47,10 +47,8 @@ namespace ProjectsManagement.CQRS.Users.Commands
                 return ResultDTO.Faliure("Username is alerady registered!");
             }
 
-            // Generate OTP
             var otp = GenerateOTP();
 
-            // Send OTP
             await SendOTPAsync(request.registerRequestDTO.Email, otp);
 
             var user = request.registerRequestDTO.MapOne<User>();
@@ -80,7 +78,6 @@ namespace ProjectsManagement.CQRS.Users.Commands
             string subject = "Verify your Account";
             string body = $"Your Verification code is {otp}. It will expire in 5 minutes.";
             await _emailSenderHelper.SendEmailAsync(email, subject, body);
-
         }
     }
 }

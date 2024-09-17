@@ -8,7 +8,9 @@ using ProjectsManagement.Specification.UserSpecifications;
 namespace ProjectsManagement.CQRS.Users.Commands
 {
     public record ForgetPasswordCommand(ForgetPasswordDTO forgetPasswordDTO):IRequest<ResultDTO>;
+
     public record ForgetPasswordDTO(string Email);
+
     public class ForgetPasswordCommandHandler : IRequestHandler<ForgetPasswordCommand, ResultDTO>
     {
         private readonly IRepository<User> _userRepository;
@@ -25,11 +27,16 @@ namespace ProjectsManagement.CQRS.Users.Commands
         public async Task<ResultDTO> Handle(ForgetPasswordCommand request, CancellationToken cancellationToken)
         {
             var spec = new UserSpecification(request.forgetPasswordDTO.Email);
+
             var user = await _userRepository.FirstAsync(spec.Criteria);
-            if (user == null)
+
+            if (user is null)
+            {
                 return ResultDTO.Faliure("This email can not be found");
+            }
 
             string resetToken = Guid.NewGuid().ToString();
+
             string hashedToken = BCrypt.Net.BCrypt.HashPassword(resetToken);
 
             var passwordChangeRequest = new PasswordChangeRequest
@@ -40,6 +47,7 @@ namespace ProjectsManagement.CQRS.Users.Commands
             };
 
             await _passwordChangeRequestRepository.AddAsync(passwordChangeRequest);
+
             await _passwordChangeRequestRepository.SaveChangesAsync();
 
              

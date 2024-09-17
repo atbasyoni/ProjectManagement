@@ -33,6 +33,11 @@ namespace ProjectsManagement.CQRS.Users.Commands
                 return ResultDTO.Faliure("Email or Password is incorrect");
             }
 
+            if (!user.IsVerified)
+            {
+                return ResultDTO.Faliure("Confirm your email to login!");
+            }
+
             var token = TokenGenerator.GenerateToken(user.ID.ToString(), user.FullName, "1");
 
             return ResultDTO.Sucess(token, "User Login Successfully!");
