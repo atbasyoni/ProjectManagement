@@ -41,14 +41,15 @@ namespace ProjectsManagement.Repositories.Base
         {
             return await _context.Set<T>().FirstOrDefaultAsync(a => a.IsDeleted != true && a.ID == id);
         }
-        public async Task<IQueryable<T>> GetAllPaginationAsync(int pageNumber, int pageSize)
+
+        public IQueryable<T> GetAllPaginationAsync(int pageNumber, int pageSize)
         {
             var query = _context.Set<T>()
                 .Where(a => a.IsDeleted != true)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize);
 
-            return await Task.FromResult(query);
+            return query;
         }
 
         public async Task DeleteAsync(int id)

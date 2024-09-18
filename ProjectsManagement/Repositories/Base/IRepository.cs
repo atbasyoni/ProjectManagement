@@ -8,7 +8,7 @@ namespace ProjectsManagement.Repositories.Base
     {
         IQueryable<T> GetAllAsync();
         Task<T> GetByIDAsync(int id);
-        Task<IQueryable<T>> GetAllPaginationAsync(int pageNumber, int pageSize);
+        IQueryable<T> GetAllPaginationAsync(int pageNumber, int pageSize);
         Task<T> AddAsync(T entity);
         Task AddRangeAsync(List<T> entities);
         Task<T> UpdateAsync(T entity);

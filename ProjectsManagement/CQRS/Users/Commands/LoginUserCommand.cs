@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using ProjectsManagement.DTOs;
+using ProjectsManagement.Helpers;
 using ProjectsManagement.Models;
 using ProjectsManagement.Repositories.Base;
 using ProjectsManagement.Services;
 using ProjectsManagement.Specification.UserSpecifications;
-
 
 namespace ProjectsManagement.CQRS.Users.Commands
 {
@@ -28,7 +28,7 @@ namespace ProjectsManagement.CQRS.Users.Commands
             var spec = new UserSpecification(request.loginRequestDTO.Email);
             var user = await _userRepository.FirstAsync(spec.Criteria);
 
-            if (user is null || !BCrypt.Net.BCrypt.Verify(request.loginRequestDTO.Password, user.PasswordHash))
+            if (user is null || !HashHelper.CheckHash(request.loginRequestDTO.Password, user.PasswordHash))
             {
                 return ResultDTO.Faliure("Email or Password is incorrect");
             }
@@ -42,6 +42,5 @@ namespace ProjectsManagement.CQRS.Users.Commands
 
             return ResultDTO.Sucess(token, "User Login Successfully!");
         }
-
     }
 }

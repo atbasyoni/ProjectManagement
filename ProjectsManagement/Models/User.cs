@@ -14,9 +14,13 @@
         public DateTime? OTPExpiration { get; set; }
         public bool IsVerified { get; set; } = false;
 
-        public ICollection<Tasks> Tasks { get; set; }
+        public int PictureID { get; set; }
+        public Picture Picture { get; set; }
+
+        public ICollection<Project> OwnedProjects { get; set; }
+        public ICollection<Project> ProjectMemberships { get; set; }
         public ICollection<UserRole> UserRoles { get; set; }
-        public ICollection<UserProject> UserProjects { get; set; }
+        public ICollection<TaskUser> TaskUsers { get; set; }
         public ICollection<PasswordChangeRequest> PasswordChangeRequests { get; set;}
     }
 }

@@ -1,12 +1,15 @@
 ﻿using MediatR;
 using ProjectsManagement.DTOs;
+using ProjectsManagement.Helpers;
 using ProjectsManagement.Models;
 using ProjectsManagement.Repositories.Base;
 
 namespace ProjectsManagement.CQRS.Users.Commands
 {
     public record ResetPasswordCommand(ResetPasswordDTO ResetPasswordDTO) : IRequest<ResultDTO>;
+
     public record ResetPasswordDTO(string Email,string Token, string NewPassword);
+
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, ResultDTO>
     {
         private readonly IRepository<PasswordChangeRequest> _passwordChangeRequestRepository;
@@ -29,7 +32,7 @@ namespace ProjectsManagement.CQRS.Users.Commands
                 return ResultDTO.Faliure("Invalid reset token.");
             }
 
-            bool isValidToken = BCrypt.Net.BCrypt.Verify(request.ResetPasswordDTO.Token.Trim(), passwordChangeRequest.HashedToken);
+            bool isValidToken = HashHelper.CheckHash(request.ResetPasswordDTO.Token.Trim(), passwordChangeRequest.HashedToken);
 
             if (!isValidToken)
             {
@@ -48,7 +51,7 @@ namespace ProjectsManagement.CQRS.Users.Commands
                 return ResultDTO.Faliure("User or email not found.");
             }
 
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.ResetPasswordDTO.NewPassword);
+            user.PasswordHash = HashHelper.CreateHash(request.ResetPasswordDTO.NewPassword);
             await _userRepository.SaveChangesAsync();
 
             await _passwordChangeRequestRepository.DeleteAsync(passwordChangeRequest);

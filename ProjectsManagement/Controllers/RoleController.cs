@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectsManagement.CQRS.Roles.Commands;
 using ProjectsManagement.Helpers;
@@ -19,6 +20,7 @@ namespace ProjectsManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ResultViewModel> CreateRole(RoleViewModel roleViewModel)
         {
             var roleDTO = roleViewModel.MapOne<RoleDTO>();

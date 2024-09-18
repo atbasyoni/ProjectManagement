@@ -52,7 +52,8 @@ namespace ProjectsManagement.CQRS.Users.Commands
             await SendOTPAsync(request.registerRequestDTO.Email, otp);
 
             var user = request.registerRequestDTO.MapOne<User>();
-            user.PasswordHash = CreatePasswordHash(request.registerRequestDTO.Password);
+
+            user.PasswordHash = HashHelper.CreateHash(request.registerRequestDTO.Password);
             user.OTP = otp;
             user.OTPExpiration = DateTime.Now.AddMinutes(5);
 
@@ -60,11 +61,6 @@ namespace ProjectsManagement.CQRS.Users.Commands
             await _userRepository.SaveChangesAsync(); 
 
             return ResultDTO.Sucess(user, "User registred successfully!");
-        }
-
-        private string CreatePasswordHash(string password)
-        {
-            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         private string GenerateOTP()

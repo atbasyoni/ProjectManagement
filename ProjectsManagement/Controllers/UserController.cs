@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectsManagement.CQRS.Users.Commands;
 using ProjectsManagement.CQRS.Users.Orchestrators;
@@ -52,6 +53,7 @@ namespace ProjectsManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ResultViewModel> VerifyAccount(string email, string OTP)
         {
             var resultDTO = await _mediator.Send(new VerifyOTPCommand(email,OTP));
@@ -65,6 +67,7 @@ namespace ProjectsManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ResultViewModel> ForgotPassword(ForgetPasswordViewModel forgetPasswordViewModel)
         {
             var forgetPasswordDTO = forgetPasswordViewModel.MapOne<ForgetPasswordDTO>();
@@ -80,6 +83,7 @@ namespace ProjectsManagement.Controllers
         }
         
         [HttpPost]
+        [Authorize]
         public async Task<ResultViewModel> ResetPassword(ResetPasswordViewModel resetPasswordViewModel)
         {
             var resetPasswordDTO = resetPasswordViewModel.MapOne<ResetPasswordDTO>();
@@ -92,6 +96,22 @@ namespace ProjectsManagement.Controllers
             }
 
             return ResultViewModel.Sucess(result.Data, result.Message);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ResultViewModel> ChangePassword(ChangePasswordViewModel changePasswordViewModel)
+        {
+            var changePasswordDTO = changePasswordViewModel.MapOne<ChangePasswordDTO>();
+
+            var result = await _mediator.Send(new ChangePasswordCommand(changePasswordDTO));
+
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+
+            return ResultViewModel.Sucess(result.Message);
         }
     }
 }

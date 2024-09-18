@@ -14,16 +14,18 @@ namespace ProjectsManagement.CQRS.Users.Commands
     public class ForgetPasswordCommandHandler : IRequestHandler<ForgetPasswordCommand, ResultDTO>
     {
         private readonly IRepository<User> _userRepository;
-        private readonly EmailSenderHelper _emailSender;
         private readonly IRepository<PasswordChangeRequest> _passwordChangeRequestRepository;
+        private readonly EmailSenderHelper _emailSender;
 
-        public ForgetPasswordCommandHandler(IRepository<User> userRepository, EmailSenderHelper emailSender,
+        public ForgetPasswordCommandHandler(IRepository<User> userRepository, 
+            EmailSenderHelper emailSender,
             IRepository<PasswordChangeRequest> passwordChangeRequestRepository)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;
             _passwordChangeRequestRepository = passwordChangeRequestRepository;
         }
+
         public async Task<ResultDTO> Handle(ForgetPasswordCommand request, CancellationToken cancellationToken)
         {
             var spec = new UserSpecification(request.forgetPasswordDTO.Email);
@@ -36,8 +38,7 @@ namespace ProjectsManagement.CQRS.Users.Commands
             }
 
             string resetToken = Guid.NewGuid().ToString();
-
-            string hashedToken = BCrypt.Net.BCrypt.HashPassword(resetToken);
+            string hashedToken = HashHelper.CreateHash(resetToken);
 
             var passwordChangeRequest = new PasswordChangeRequest
             {
@@ -49,15 +50,11 @@ namespace ProjectsManagement.CQRS.Users.Commands
             await _passwordChangeRequestRepository.AddAsync(passwordChangeRequest);
 
             await _passwordChangeRequestRepository.SaveChangesAsync();
-
              
             await _emailSender.SendEmailAsync(user.Email, "Password Reset",
                            $"Please reset your password[ {resetToken} ]. This Token will expire in 24 hours.");
 
             return ResultDTO.Sucess(null, "Password reset link has been sent to your email.");
-
         }
     }
-
-
 }
