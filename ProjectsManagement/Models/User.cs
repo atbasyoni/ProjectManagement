@@ -18,7 +18,7 @@
         public Picture Picture { get; set; }
 
         public ICollection<Project> OwnedProjects { get; set; }
-        public ICollection<Project> ProjectMemberships { get; set; }
+        public ICollection<ProjectUser> ProjectMemberships { get; set; }
         public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<TaskUser> TaskUsers { get; set; }
         public ICollection<PasswordChangeRequest> PasswordChangeRequests { get; set;}

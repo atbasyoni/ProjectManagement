@@ -31,7 +31,7 @@ namespace ProjectsManagement.Repositories.Base
         {
             await _context.Set<T>().AddRangeAsync(entities);
         }
-        public IQueryable<T> GetAllAsync()
+        public IQueryable<T> GetAll()
         {
             IQueryable<T> query = _context.Set<T>().Where(a => a.IsDeleted != true);
             return query;
@@ -42,7 +42,7 @@ namespace ProjectsManagement.Repositories.Base
             return await _context.Set<T>().FirstOrDefaultAsync(a => a.IsDeleted != true && a.ID == id);
         }
 
-        public IQueryable<T> GetAllPaginationAsync(int pageNumber, int pageSize)
+        public IQueryable<T> GetAllPagination(int pageNumber, int pageSize)
         {
             var query = _context.Set<T>()
                 .Where(a => a.IsDeleted != true)
@@ -69,19 +69,24 @@ namespace ProjectsManagement.Repositories.Base
             return await Task.FromResult(entity);
         }
 
-        public IQueryable<T> GetAllAsync(Expression<Func<T, bool>> predicate)
+        public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate)
         {
-            return GetAllAsync().Where(predicate);
+            return GetAll().Where(predicate);
         }
 
         public async Task<T> FirstAsync(Expression<Func<T, bool>> predicate)
         {
-            return await GetAllAsync(predicate).FirstOrDefaultAsync();
+            return await GetAll(predicate).FirstOrDefaultAsync();
         }
 
         public async Task<T> FirstAsyncWithTracking(Expression<Func<T, bool>> predicate)
         {
-            return await GetAllAsync(predicate).AsTracking().FirstOrDefaultAsync();
+            return await GetAll(predicate).AsTracking().FirstOrDefaultAsync();
+        }
+
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await GetAll(predicate).CountAsync();
         }
     }
 }

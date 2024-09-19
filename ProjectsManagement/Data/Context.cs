@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectsManagement.Configurations;
 using ProjectsManagement.Models;
 
 namespace ProjectsManagement.Data
@@ -21,13 +22,14 @@ namespace ProjectsManagement.Data
                     foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
                 }
             }
+
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Picture> Pictures { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
-        public DbSet<Board> Boards { get; set; }
         public DbSet<Tasks> Tasks { get; set; }
         public DbSet<TaskUser> TaskUsers { get; set; }
         public DbSet<Project> Projects { get; set; }

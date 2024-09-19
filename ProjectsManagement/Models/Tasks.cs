@@ -10,8 +10,8 @@ namespace ProjectsManagement.Models
         public DateTime DueDate { get; set; }
         public TasksStatus TaskStatus { get; set; }
 
-        public int BoardID { get; set; }
-        public Board Board { get; set; }
+        public int ProjectID { get; set; }
+        public Project Project { get; set; }
 
         public ICollection<TaskUser> AssignedUsers { get; set; }
     }
