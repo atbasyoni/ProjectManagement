@@ -1,4 +1,7 @@
 ﻿using MediatR;
+using ProjectsManagement.CQRS.Taskss.Queries;
+using ProjectsManagement.CQRS.TaskUsers.Queries;
+using ProjectsManagement.CQRS.Users.Queries;
 using ProjectsManagement.DTOs;
 using ProjectsManagement.Helpers;
 using ProjectsManagement.Models;
@@ -13,31 +16,24 @@ namespace ProjectsManagement.CQRS.TaskUsers.Commands
     public class AssignUserToTaskCommandHandler : IRequestHandler<AssignUserToTaskCommand, ResultDTO>
     {
         IRepository<TaskUser> _taskUserRepository;
-        IRepository<Tasks> _taskRepository;
-        IRepository<User> _userRepository;
         IMediator _mediator;
 
-        public AssignUserToTaskCommandHandler(IRepository<TaskUser> taskUserRepository, 
-            IRepository<Tasks> taskRepository, 
-            IRepository<User> userRepository, 
-            IMediator mediator)
+        public AssignUserToTaskCommandHandler(IRepository<TaskUser> taskUserRepository, IMediator mediator)
         {
             _taskUserRepository = taskUserRepository;
-            _taskRepository = taskRepository;
-            _userRepository = userRepository;
             _mediator = mediator;
         }
 
         public async Task<ResultDTO> Handle(AssignUserToTaskCommand request, CancellationToken cancellationToken)
         {
-            var taskUser = await _taskUserRepository.FirstAsync(tu => (tu.TaskID == request.taskUserDTO.taskID) && (tu.UserID == request.taskUserDTO.userID));
+            var validationResult = await ValidateUserTask(request.taskUserDTO);
 
-            if (taskUser is not null)
+            if (!validationResult.IsSuccess)
             {
-                return ResultDTO.Faliure("User is already assigned to this task!");
+                return validationResult;
             }
 
-            taskUser = request.taskUserDTO.MapOne<TaskUser>();
+            var taskUser = request.taskUserDTO.MapOne<TaskUser>();
 
             taskUser = await _taskUserRepository.AddAsync(taskUser);
             await _taskUserRepository.SaveChangesAsync();
@@ -45,14 +41,30 @@ namespace ProjectsManagement.CQRS.TaskUsers.Commands
             return ResultDTO.Sucess(taskUser, "User assigned to task successfully!");
         }
 
-        public async Task<bool> ValidateUserTask(TaskUserDTO taskUserDTO)
+        private async Task<ResultDTO> ValidateUserTask(TaskUserDTO taskUserDTO)
         {
-            // Check the user exists
-            // Check the task exists
-            // Check the user assigned to the project
-            // Check the task realted to that project
-            // Check if the user is already assigned to this task
-            return true;
+            var userExists = await _mediator.Send(new GetUserByIdQuery(taskUserDTO.userID));
+
+            if (!userExists.IsSuccess)
+            {
+                return userExists;
+            }
+
+            var taskExists = await _mediator.Send(new GetTaskByIdQuery(taskUserDTO.taskID));
+
+            if (!taskExists.IsSuccess)
+            {
+                return taskExists;
+            }
+
+            var userAssignedToTask = await _mediator.Send(new GetTaskUserByIdQuery(taskUserDTO.taskID, taskUserDTO.userID));
+
+            if (userAssignedToTask.IsSuccess)
+            {
+                return ResultDTO.Faliure("User is already assigned to this task!");
+            }
+
+            return ResultDTO.Sucess(true);
         }
     }
 }
