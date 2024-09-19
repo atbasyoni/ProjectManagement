@@ -1,6 +1,11 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ProjectsManagement.CQRS.ProjectUsers.Queries;
+using ProjectsManagement.CQRS.Taskss.Queries;
+using ProjectsManagement.Data;
 using ProjectsManagement.DTOs;
+using ProjectsManagement.Enums;
+using ProjectsManagement.Helpers;
 using ProjectsManagement.Models;
 using ProjectsManagement.Repositories.Base;
 
@@ -8,23 +13,37 @@ namespace ProjectsManagement.CQRS.Projects.Queries
 {
     public record GetProjectsQuery(int pageNumber, int pageSize) : IRequest<ResultDTO>;
 
+    public record ProjectDTO(string Title, ProjectStatus ProjectStatus, int NumUsers, int NumTasks, DateTime CreatedDate);
+
     public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, ResultDTO>
     {
-        private readonly IRepository<Project> _projectRepository;
+        IRepository<Project> _projectRepository;
+        IMediator _mediator;
 
-        public GetProjectsQueryHandler(IRepository<Project> projectRepository)
+        public GetProjectsQueryHandler(IRepository<Project> projectRepository, IMediator mediator)
         {
             _projectRepository = projectRepository;
+            _mediator = mediator;
         }
 
         public async Task<ResultDTO> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
         {
-            var projects = await _projectRepository.GetAllPaginationAsync(request.pageNumber, request.pageSize).ToListAsync();
+            var projects = _projectRepository.GetAllPagination(request.pageNumber, request.pageSize);
+            var projectIDs = await projects.Select(p => p.ID).ToListAsync();
 
-            if (projects is null)
+            var projectUserCounts = await _mediator.Send(new GetProjectsUsersCountQuery(projectIDs));
+            var projectTaskCounts = await _mediator.Send(new GetProjectsTasksCountQuery(projectIDs));
+
+            var result = projects.Select(p => new
             {
-                return ResultDTO.Faliure("Failed to retrieve projects!");
-            }
+                Title = p.Title,
+                ProjectStatus = p.ProjectStatus,
+                NumTasks = projectUserCounts[p.ID],
+                NumUsers = projectTaskCounts[p.ID],
+                CreatedDate = p.CreatedDate
+            });
+
+            var projectDTO = result.Map<ProjectDTO>();
 
             return ResultDTO.Sucess(projects);
         }
