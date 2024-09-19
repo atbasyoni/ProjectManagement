@@ -97,8 +97,13 @@ namespace ProjectsManagement
 
             builder.Services.AddAuthorization();
 
+            builder.Services.AddHttpContextAccessor();
+
             var app = builder.Build();
-            app.UseStatusCodePagesWithReExecute("/Errors/{0}");
+
+            //app.UseStatusCodePagesWithReExecute("/Errors/{0}");
+
+            app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();

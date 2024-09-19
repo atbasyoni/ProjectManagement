@@ -34,18 +34,9 @@ namespace ProjectsManagement.CQRS.Projects.Queries
             var projectUserCounts = await _mediator.Send(new GetProjectsUsersCountQuery(projectIDs));
             var projectTaskCounts = await _mediator.Send(new GetProjectsTasksCountQuery(projectIDs));
 
-            var result = projects.Select(p => new
-            {
-                Title = p.Title,
-                ProjectStatus = p.ProjectStatus,
-                NumTasks = projectUserCounts[p.ID],
-                NumUsers = projectTaskCounts[p.ID],
-                CreatedDate = p.CreatedDate
-            });
+            var projectDTOs = await projects.Select(p => new ProjectDTO(p.Title, p.ProjectStatus, projectUserCounts[p.ID], projectTaskCounts[p.ID], p.CreatedDate)).ToListAsync();
 
-            var projectDTO = result.Map<ProjectDTO>();
-
-            return ResultDTO.Sucess(projects);
+            return ResultDTO.Sucess(projectDTOs);
         }
     }
 }

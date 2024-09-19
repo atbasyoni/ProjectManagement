@@ -9,7 +9,7 @@ namespace ProjectsManagement.Models
         public string Description { get; set; }
         public ProjectStatus ProjectStatus { get; set; }
 
-        public int OwnerID { get; set; }
+        public int? OwnerID { get; set; }
         public User Owner { get; set; }
 
         public ICollection<Tasks> Tasks { get; set; }

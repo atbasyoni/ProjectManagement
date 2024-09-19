@@ -14,7 +14,7 @@
         public DateTime? OTPExpiration { get; set; }
         public bool IsVerified { get; set; } = false;
 
-        public int PictureID { get; set; }
+        public int? PictureID { get; set; }
         public Picture Picture { get; set; }
 
         public ICollection<Project> OwnedProjects { get; set; }

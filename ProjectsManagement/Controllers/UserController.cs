@@ -53,7 +53,6 @@ namespace ProjectsManagement.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<ResultViewModel> VerifyAccount(string email, string OTP)
         {
             var resultDTO = await _mediator.Send(new VerifyOTPCommand(email,OTP));
@@ -67,7 +66,6 @@ namespace ProjectsManagement.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<ResultViewModel> ForgotPassword(ForgetPasswordViewModel forgetPasswordViewModel)
         {
             var forgetPasswordDTO = forgetPasswordViewModel.MapOne<ForgetPasswordDTO>();
@@ -83,7 +81,6 @@ namespace ProjectsManagement.Controllers
         }
         
         [HttpPost]
-        [Authorize]
         public async Task<ResultViewModel> ResetPassword(ResetPasswordViewModel resetPasswordViewModel)
         {
             var resetPasswordDTO = resetPasswordViewModel.MapOne<ResetPasswordDTO>();
@@ -99,7 +96,6 @@ namespace ProjectsManagement.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<ResultViewModel> ChangePassword(ChangePasswordViewModel changePasswordViewModel)
         {
             var changePasswordDTO = changePasswordViewModel.MapOne<ChangePasswordDTO>();

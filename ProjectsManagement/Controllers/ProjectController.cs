@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectsManagement.CQRS.Projects.Commands;
 using ProjectsManagement.CQRS.Projects.Queries;
 using ProjectsManagement.Helpers;
+using ProjectsManagement.Middleware;
+using ProjectsManagement.Models;
 using ProjectsManagement.ViewModels;
 using ProjectsManagement.ViewModels.Projects;
 
@@ -12,17 +14,15 @@ namespace ProjectsManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class ProjectController : ControllerBase
+    public class ProjectController : BaseController
     {
-        private readonly IMediator _mediator;
-
-        public ProjectController(IMediator mediator)
+        public ProjectController(ControllereParameters controllereParameters) : base(controllereParameters)
         {
-            _mediator = mediator;
+
         }
 
-        [HttpPost]
         [Authorize]
+        [HttpPost]
         public async Task<ResultViewModel> AddProject(ProjectCreateViewModel projectCreateViewModel)
         {
             var projectCreateDTO = projectCreateViewModel.MapOne<ProjectCreateDTO>();
@@ -38,7 +38,6 @@ namespace ProjectsManagement.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ResultViewModel> GetProjects(int pageNumber, int pageSize)
         {
             var resultDTO = await _mediator.Send(new GetProjectsQuery(pageNumber, pageSize));

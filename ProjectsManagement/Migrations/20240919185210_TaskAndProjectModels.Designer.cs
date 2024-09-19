@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectsManagement.Data;
 
@@ -11,9 +12,11 @@ using ProjectsManagement.Data;
 namespace ProjectsManagement.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240919185210_TaskAndProjectModels")]
+    partial class TaskAndProjectModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,7 +101,7 @@ namespace ProjectsManagement.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("OwnerID")
+                    b.Property<int>("OwnerID")
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectStatus")
@@ -342,7 +345,8 @@ namespace ProjectsManagement.Migrations
                     b.HasOne("ProjectsManagement.Models.User", "Owner")
                         .WithMany("OwnedProjects")
                         .HasForeignKey("OwnerID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Owner");
                 });
