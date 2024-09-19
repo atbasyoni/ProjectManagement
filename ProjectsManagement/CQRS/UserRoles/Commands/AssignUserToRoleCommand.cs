@@ -1,4 +1,8 @@
 ﻿using MediatR;
+using ProjectsManagement.CQRS.Roles.Queries;
+using ProjectsManagement.CQRS.TaskUsers.Commands;
+using ProjectsManagement.CQRS.UserRoles.Queries;
+using ProjectsManagement.CQRS.Users.Queries;
 using ProjectsManagement.DTOs;
 using ProjectsManagement.Helpers;
 using ProjectsManagement.Models;
@@ -23,19 +27,45 @@ namespace ProjectsManagement.CQRS.UserRoles.Commands
 
         public async Task<ResultDTO> Handle(AssignUserToRoleCommand request, CancellationToken cancellationToken)
         {
-            var userRole = await _userRoleRepository.FirstAsync(ur => (ur.RoleID == request.userRoleDTO.roleID) &&  (ur.UserID == request.userRoleDTO.userID));
+            var validationResult = await ValidateUserRole(request.userRoleDTO);
 
-            if (userRole is not null)
+            if (!validationResult.IsSuccess) 
             {
-                return ResultDTO.Faliure("User is already assigned to this role!");
+                return validationResult;
             }
 
-            userRole = request.userRoleDTO.MapOne<UserRole>();
+            var userRole = request.userRoleDTO.MapOne<UserRole>();
 
             userRole = await _userRoleRepository.AddAsync(userRole);
             await _userRoleRepository.SaveChangesAsync();
 
             return ResultDTO.Sucess(userRole, "User assigned to role successfully!");
+        }
+
+        private async Task<ResultDTO> ValidateUserRole(UserRoleDTO userRoleDTO)
+        {
+            var userExists = await _mediator.Send(new GetUserByIdQuery(userRoleDTO.userID));
+
+            if (!userExists.IsSuccess)
+            {
+                return userExists;
+            }
+
+            var roleExists = await _mediator.Send(new GetRoleByIdQuery(userRoleDTO.roleID));
+
+            if (!roleExists.IsSuccess)
+            {
+                return roleExists;
+            }
+
+            var userAssignedToRole = await _mediator.Send(new GetUserRoleByIdQuery(userRoleDTO.userID, userRoleDTO.roleID));
+
+            if (userAssignedToRole.IsSuccess) 
+            {
+                return ResultDTO.Faliure("User is already assigned to this role!");
+            }
+
+            return ResultDTO.Sucess(true);
         }
     }
 }

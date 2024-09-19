@@ -31,12 +31,12 @@ namespace ProjectsManagement.CQRS.Users.Commands
                 return ResultDTO.Faliure("Email is wrong!");
             }
 
-            if (!HashHelper.CheckPasswordHash(request.forgetPasswordDTO.CurrentPassword, user.PasswordHash))
+            if (!HashHelper.CheckHash(request.forgetPasswordDTO.CurrentPassword, user.PasswordHash))
             {
                 return ResultDTO.Faliure("current password is wrong");
             }
 
-            user.PasswordHash = HashHelper.CreatePasswordHash(request.forgetPasswordDTO.NewPassword);
+            user.PasswordHash = HashHelper.CreateHash(request.forgetPasswordDTO.NewPassword);
 
             await _userRepository.UpdateAsync(user);
             await _userRepository.SaveChangesAsync();
