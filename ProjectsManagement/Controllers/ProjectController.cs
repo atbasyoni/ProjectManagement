@@ -2,8 +2,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Helper;
+using ProjectManagementSystem.Repository.Specification;
 using ProjectsManagement.CQRS.Projects.Commands;
 using ProjectsManagement.CQRS.Projects.Queries;
+using ProjectsManagement.CQRS.ProjectUsers.Commands;
+using ProjectsManagement.DTOs;
 using ProjectsManagement.Helpers;
 using ProjectsManagement.Middleware;
 using ProjectsManagement.Models;
@@ -38,30 +42,33 @@ namespace ProjectsManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<ResultViewModel> GetProjects(int pageNumber, int pageSize)
+        public async Task<ResultViewModel> GetProjects([FromQuery] SpecParams spec)
         {
-            var resultDTO = await _mediator.Send(new GetProjectsQuery(pageNumber, pageSize));
+            var resultDTO = await _mediator.Send(new GetProjectsQuery(spec));
             
             if (!resultDTO.IsSuccess)
             {
                 return ResultViewModel.Faliure(resultDTO.Message);
             }
+            var projectCount = await _mediator.Send(new GetProjectsCountQuery(spec));
+            var paginationResult = new Pagination<ProjectDTO>(spec.PageSize, spec.PageIndex, projectCount, resultDTO.Data);
 
-            return ResultViewModel.Sucess(resultDTO.Data);
+            return ResultViewModel.Sucess(paginationResult);
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<ResultViewModel> SearchProjectByTitle(string title)
+        [HttpPost]
+        public async Task<ResultViewModel> AssignUserToProject(AssignUserProjectViewModel  assignUserViewModel)
         {
-            var resultDTO = await _mediator.Send(new SearchProjectByTitleQuery(title));
+            var  projectUserDTO =  assignUserViewModel.MapOne <ProjectUserDTO>();
+
+            var resultDTO = await _mediator.Send(new AssignUserToProjectCommand(projectUserDTO));
 
             if (!resultDTO.IsSuccess)
             {
                 return ResultViewModel.Faliure(resultDTO.Message);
             }
 
-            return ResultViewModel.Sucess(resultDTO.Data);
+            return ResultViewModel.Sucess(resultDTO.Message);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectsManagement.Data;
 using ProjectsManagement.Models;
+using ProjectsManagement.Specification;
 using System.Linq.Expressions;
 
 
@@ -87,6 +88,19 @@ namespace ProjectsManagement.Repositories.Base
         public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
         {
             return await GetAll(predicate).CountAsync();
+        }
+        private IQueryable<T> ApplySpecification(ISpecification<T> Spec)
+        {
+            return SpecificationEvaluator<T>.GetQuery(_context.Set<T>(), Spec);
+        }
+
+        public async Task<int> GetCountWithSpecAsync(ISpecification<T> Spec)
+        {
+            return await ApplySpecification(Spec).CountAsync();
+        }
+        public async Task<IEnumerable<T>> GetAllWithSpecAsync(ISpecification<T> Spec)
+        {
+            return await ApplySpecification(Spec).Where(x => x.IsDeleted == false).ToListAsync();
         }
     }
 }

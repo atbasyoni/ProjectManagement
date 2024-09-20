@@ -1,4 +1,5 @@
-﻿using MediatR;
+using Hangfire;
+using MediatR;
 using ProjectsManagement.CQRS.Projects.Queries;
 using ProjectsManagement.CQRS.ProjectUsers.Queries;
 using ProjectsManagement.CQRS.Taskss.Queries;
@@ -19,11 +20,16 @@ namespace ProjectsManagement.CQRS.ProjectUsers.Commands
     {
         IRepository<ProjectUser> _projectUserRepository;
         IMediator _mediator;
+        private readonly EmailSenderHelper _emailSender;
+        private readonly IRepository<User> _userRepo;
 
-        public AssignUserToProjectCommandHandler(IRepository<ProjectUser> projectUserRepository, IMediator mediator)
+        public AssignUserToProjectCommandHandler(IRepository<ProjectUser> projectUserRepository, IMediator mediator
+            , EmailSenderHelper emailSender, IRepository<User> userRepo)
         {
             _projectUserRepository = projectUserRepository;
             _mediator = mediator;
+            _emailSender = emailSender;
+            _userRepo = userRepo;
         }
 
         public async Task<ResultDTO> Handle(AssignUserToProjectCommand request, CancellationToken cancellationToken)
@@ -39,6 +45,9 @@ namespace ProjectsManagement.CQRS.ProjectUsers.Commands
 
             projectUser = await _projectUserRepository.AddAsync(projectUser);
             await _projectUserRepository.SaveChangesAsync();
+
+            var user = await _userRepo.FirstAsyncWithTracking(u => u.ID == request.projectUserDTO.userID);
+            BackgroundJob.Enqueue(() => SendEmailNotificationAsync(projectUser.ID.ToString(), user.Email));
 
             return ResultDTO.Sucess(projectUser, "User assigned to project successfully!");
         }
@@ -67,6 +76,13 @@ namespace ProjectsManagement.CQRS.ProjectUsers.Commands
             }
 
             return ResultDTO.Sucess(true);
+        }
+        public async Task SendEmailNotificationAsync(string projectUserId, string email)
+        {
+            var subject = "You have been assigned to a new project";
+            var body = $"Hello, you have been assigned to project with ID: {projectUserId}";
+
+            await _emailSender.SendEmailAsync(email, subject, body);
         }
     }
 }
