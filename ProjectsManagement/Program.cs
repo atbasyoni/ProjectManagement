@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Autofac.Core;
 using Microsoft.Extensions.Configuration;
+using Hangfire;
 
 namespace ProjectsManagement
 {
@@ -97,8 +98,20 @@ namespace ProjectsManagement
 
             builder.Services.AddAuthorization();
 
+            builder.Services.AddHttpContextAccessor();
+
+            //configreSettingsForHangfire
+            builder.Services.AddHangfire(cfg => 
+                 cfg.UseSqlServerStorage(builder.Configuration.GetConnectionString("Default")));
+            builder.Services.AddHangfireServer();
+
             var app = builder.Build();
-            app.UseStatusCodePagesWithReExecute("/Errors/{0}");
+            app.UseHangfireDashboard("/hangfire");
+            app.UseHangfireServer();
+
+            //app.UseStatusCodePagesWithReExecute("/Errors/{0}");
+
+            app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
