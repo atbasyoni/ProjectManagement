@@ -1,16 +1,11 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using ProjectsManagement.Repository.Specification;
-using ProjectsManagement.CQRS.ProjectUsers.Queries;
-using ProjectsManagement.CQRS.Taskss.Queries;
-using ProjectsManagement.Data;
+using ProjectManagementSystem.Repository.Specification;
 using ProjectsManagement.DTOs;
 using ProjectsManagement.Enums;
 using ProjectsManagement.Helpers;
 using ProjectsManagement.Models;
 using ProjectsManagement.Repositories.Base;
 using ProjectsManagement.Specification.ProjectsSpec;
-using System.Linq;
 
 namespace ProjectsManagement.CQRS.Projects.Queries
 {
@@ -23,8 +18,6 @@ namespace ProjectsManagement.CQRS.Projects.Queries
         public int NumTasks { get; set; }
         public DateTime CreatedDate {get;set;}
     }
-
-    public record ProjectDTO(string Title, ProjectStatus ProjectStatus, int NumUsers, int NumTasks, DateTime CreatedDate);
 
     public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, ResultDTO>
     {
