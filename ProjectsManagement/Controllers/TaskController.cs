@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ProjectsManagement.CQRS.Taskss.Commands;
+using ProjectsManagement.CQRS.Taskss.Queries;
 using ProjectsManagement.Helpers;
 using ProjectsManagement.ViewModels;
 using ProjectsManagement.ViewModels.Taskss;
@@ -47,5 +48,44 @@ namespace ProjectsManagement.Controllers
 
             return ResultViewModel.Sucess(resultDTO.Message);
         }
+        [HttpGet]
+        public async Task<ResultViewModel> GetCompletedTasks(int projectID)
+        {
+            var resultDTO = await _mediator.Send(new GetCompletedTasksQuery(projectID));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel.Sucess(resultDTO.Message);
+        }
+
+        [HttpGet]
+        public async Task<ResultViewModel> GetPendingTasks(int projectID)
+        {
+            var resultDTO = await _mediator.Send(new GetPendingTasksQuery(projectID));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel.Sucess(resultDTO.Message);
+        }
+
+        [HttpGet]
+        public async Task<ResultViewModel> GetToDoTasks(int projectID)
+        {
+            var resultDTO = await _mediator.Send(new GetToDoTasksQuery(projectID));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel.Sucess(resultDTO.Message);
+        }
     }
+
 }
