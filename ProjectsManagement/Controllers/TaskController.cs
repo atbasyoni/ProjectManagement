@@ -1,8 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Helper;
+using ProjectManagementSystem.Repository.Specification;
+using ProjectsManagement.CQRS.Projects.Queries;
 using ProjectsManagement.CQRS.Taskss.Commands;
 using ProjectsManagement.CQRS.Taskss.Queries;
 using ProjectsManagement.Helpers;
+using ProjectsManagement.Models;
+using ProjectsManagement.Repositories.Base;
 using ProjectsManagement.ViewModels;
 using ProjectsManagement.ViewModels.Taskss;
 
@@ -49,42 +54,18 @@ namespace ProjectsManagement.Controllers
             return ResultViewModel.Sucess(resultDTO.Message);
         }
         [HttpGet]
-        public async Task<ResultViewModel> GetCompletedTasks(int projectID)
+        public async Task<ResultViewModel> GetTasks([FromQuery] SpecParams spec)
         {
-            var resultDTO = await _mediator.Send(new GetCompletedTasksQuery(projectID));
+            var resultDTO = await _mediator.Send(new GetTasksQuery(spec));
 
             if (!resultDTO.IsSuccess)
             {
                 return ResultViewModel.Faliure(resultDTO.Message);
             }
+            var TaskCount = await _mediator.Send(new GetCountTaskQuery(spec));
+            var paginationResult = new Pagination<TaskDTO>(spec.PageSize, spec.PageIndex, TaskCount, resultDTO.Data);
 
-            return ResultViewModel.Sucess(resultDTO.Message);
-        }
-
-        [HttpGet]
-        public async Task<ResultViewModel> GetPendingTasks(int projectID)
-        {
-            var resultDTO = await _mediator.Send(new GetPendingTasksQuery(projectID));
-
-            if (!resultDTO.IsSuccess)
-            {
-                return ResultViewModel.Faliure(resultDTO.Message);
-            }
-
-            return ResultViewModel.Sucess(resultDTO.Message);
-        }
-
-        [HttpGet]
-        public async Task<ResultViewModel> GetToDoTasks(int projectID)
-        {
-            var resultDTO = await _mediator.Send(new GetToDoTasksQuery(projectID));
-
-            if (!resultDTO.IsSuccess)
-            {
-                return ResultViewModel.Faliure(resultDTO.Message);
-            }
-
-            return ResultViewModel.Sucess(resultDTO.Message);
+            return ResultViewModel.Sucess(paginationResult);
         }
     }
 
