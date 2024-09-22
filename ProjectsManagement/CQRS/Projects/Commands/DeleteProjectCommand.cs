@@ -20,7 +20,8 @@ namespace ProjectsManagement.CQRS.Projects.Commands
         public async Task<ResultDTO> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
         {
             var project = await _projectRepository.FirstAsyncWithTracking(p => p.ID == request.ProjectID);
-            if (project == null)
+
+            if (project is null)
             {
                 return ResultDTO.Faliure("Project not found!");
             }

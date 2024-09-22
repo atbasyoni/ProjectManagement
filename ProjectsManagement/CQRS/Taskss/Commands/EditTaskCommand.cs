@@ -24,10 +24,11 @@ namespace ProjectsManagement.CQRS.Taskss.Commands
         {
             var task = await _taskRepository.FirstAsyncWithTracking(t => t.ID == request.updateTaskDTO.TaskID);
 
-            if (task == null)
+            if (task is null)
             {
                 return ResultDTO.Faliure("Task not found!");
             }
+
             task.Title = request.updateTaskDTO.Title;
             task.Description = request.updateTaskDTO.Description;
             task.StartDate = request.updateTaskDTO.StartDate;

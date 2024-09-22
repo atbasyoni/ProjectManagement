@@ -20,7 +20,7 @@ namespace ProjectsManagement.CQRS.Projects.Commands
         {
             var project = await _projectRepository.GetByIDAsync(request.ProjectID);
 
-            if (project == null)
+            if (project is null)
             {
                 return ResultDTO.Faliure("Project not found!");
             }

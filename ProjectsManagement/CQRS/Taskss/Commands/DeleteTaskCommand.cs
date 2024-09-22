@@ -19,7 +19,7 @@ namespace ProjectsManagement.CQRS.Taskss.Commands
         {
             var task = await _taskRepository.FirstAsync(t => t.ID == request.TaskID);
 
-            if (task == null)
+            if (task is null)
             {
                 return ResultDTO.Faliure("Task not found!");
             }

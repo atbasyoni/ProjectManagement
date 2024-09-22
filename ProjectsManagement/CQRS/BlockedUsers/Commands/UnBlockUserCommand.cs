@@ -3,7 +3,7 @@ using ProjectsManagement.DTOs;
 using ProjectsManagement.Models;
 using ProjectsManagement.Repositories.Base;
 
-namespace ProjectsManagement.CQRS.BlockedUsers
+namespace ProjectsManagement.CQRS.BlockedUsers.Commands
 {
     public record UnblockUserCommand(int BlockedID) : IRequest<ResultDTO>;
 

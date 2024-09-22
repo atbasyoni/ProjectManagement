@@ -2,8 +2,6 @@ using Hangfire;
 using MediatR;
 using ProjectsManagement.CQRS.Projects.Queries;
 using ProjectsManagement.CQRS.ProjectUsers.Queries;
-using ProjectsManagement.CQRS.Taskss.Queries;
-using ProjectsManagement.CQRS.TaskUsers.Commands;
 using ProjectsManagement.CQRS.Users.Queries;
 using ProjectsManagement.DTOs;
 using ProjectsManagement.Helpers;
@@ -77,6 +75,7 @@ namespace ProjectsManagement.CQRS.ProjectUsers.Commands
 
             return ResultDTO.Sucess(true);
         }
+
         public async Task SendEmailNotificationAsync(string projectUserId, string email)
         {
             var subject = "You have been assigned to a new project";

@@ -1,12 +1,11 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ProjectsManagement.CQRS.BlockedUsers;
+using ProjectsManagement.CQRS.BlockedUsers.Commands;
 using ProjectsManagement.ViewModels;
 
 namespace ProjectsManagement.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class BlockedUsersController : ControllerBase
     {
@@ -17,11 +16,10 @@ namespace ProjectsManagement.Controllers
             _mediator = mediator;
         }
 
-        // Block a user
-        [HttpPost("block")]
+
+        [HttpPost]
         public async Task<ResultViewModel> BlockUser(int BlockedID)
         {
-
             var result = await _mediator.Send(new BlockUserCommand(BlockedID));
 
             if (!result.IsSuccess)
@@ -35,7 +33,6 @@ namespace ProjectsManagement.Controllers
         [HttpDelete]
         public async Task<ResultViewModel> UnblockUser(int BlockedID)
         {
-
             var result = await _mediator.Send(new UnblockUserCommand(BlockedID));
 
             if (!result.IsSuccess)

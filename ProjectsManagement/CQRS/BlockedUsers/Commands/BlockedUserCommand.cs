@@ -3,7 +3,7 @@ using ProjectsManagement.DTOs;
 using ProjectsManagement.Models;
 using ProjectsManagement.Repositories.Base;
 
-namespace ProjectsManagement.CQRS.BlockedUsers
+namespace ProjectsManagement.CQRS.BlockedUsers.Commands
 {
     public record BlockUserCommand(int BlockedID) : IRequest<ResultDTO>;
 
@@ -25,7 +25,7 @@ namespace ProjectsManagement.CQRS.BlockedUsers
             var existingBlock = await _blockedUserRepository.FirstAsync(b =>
                 b.BlockerID == blockerID && b.BlockedID == request.BlockedID);
 
-            if (existingBlock != null)
+            if (existingBlock is not null)
             {
                 return ResultDTO.Faliure("User is already blocked.");
             }

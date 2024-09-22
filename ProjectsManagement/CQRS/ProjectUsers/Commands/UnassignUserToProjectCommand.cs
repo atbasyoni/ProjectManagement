@@ -22,7 +22,7 @@ namespace ProjectsManagement.CQRS.ProjectUsers.Commands
             var projectUser = await _projectUserRepository.FirstAsyncWithTracking(
                 pu => pu.ProjectID == request.projectUserDTO.projectID && pu.UserID == request.projectUserDTO.userID);
 
-            if (projectUser == null)
+            if (projectUser is null)
             {
                 return ResultDTO.Faliure("User is not assigned to this project!");
             }

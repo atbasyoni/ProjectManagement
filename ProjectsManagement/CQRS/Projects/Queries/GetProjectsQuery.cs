@@ -11,13 +11,7 @@ namespace ProjectsManagement.CQRS.Projects.Queries
 {
     public record GetProjectsQuery(SpecParams SpecParams) : IRequest<ResultDTO>;
 
-    public class ProjectDTO
-    { public string Title { get; set; }
-        public ProjectStatus ProjectStatus { get; set; }
-        public int NumUsers { get; set; }
-        public int NumTasks { get; set; }
-        public DateTime CreatedDate {get;set;}
-    }
+    public record ProjectDTO(string Title, ProjectStatus ProjectStatus, int NumUsers, int NumTasks, DateTime CreatedDate);
 
     public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, ResultDTO>
     {

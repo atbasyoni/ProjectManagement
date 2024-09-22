@@ -6,6 +6,7 @@ namespace ProjectsManagement.ViewModels.Projects
     {
         [Required]
         public int UserId { get; set; }
+
         [Required]
         public int ProjectId { get; set; }
     }

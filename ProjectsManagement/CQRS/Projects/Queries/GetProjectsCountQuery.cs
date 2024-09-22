@@ -19,6 +19,7 @@ namespace ProjectsManagement.CQRS.Projects.Queries
         public async Task<int> Handle(GetProjectsCountQuery request, CancellationToken cancellationToken)
         {
             var projectSpec = new CountProjectWithSpec(request.SpecParams);
+
             var count =await _projectRepo.GetCountWithSpecAsync(projectSpec);
 
             return count ;

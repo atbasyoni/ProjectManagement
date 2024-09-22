@@ -2,17 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Helper;
 using ProjectManagementSystem.Repository.Specification;
-using ProjectsManagement.CQRS.Projects.Queries;
-using ProjectsManagement.CQRS.ProjectUsers.Commands;
 using ProjectsManagement.CQRS.Taskss.Commands;
 using ProjectsManagement.CQRS.Taskss.Queries;
 using ProjectsManagement.CQRS.TaskUsers.Commands;
-using ProjectsManagement.DTOs;
 using ProjectsManagement.Helpers;
-using ProjectsManagement.Models;
-using ProjectsManagement.Repositories.Base;
 using ProjectsManagement.ViewModels;
-using ProjectsManagement.ViewModels.Projects;
 using ProjectsManagement.ViewModels.Taskss;
 
 namespace ProjectsManagement.Controllers
@@ -57,6 +51,7 @@ namespace ProjectsManagement.Controllers
 
             return ResultViewModel.Sucess(resultDTO.Message);
         }
+
         [HttpGet]
         public async Task<ResultViewModel> GetTasks([FromQuery] SpecParams spec)
         {
@@ -71,6 +66,7 @@ namespace ProjectsManagement.Controllers
 
             return ResultViewModel.Sucess(paginationResult);
         }
+
         [HttpPost]
         public async Task<ResultViewModel> AssignUserToTask(TaskUserViewModel taskUserViewModel)
         {
@@ -85,6 +81,7 @@ namespace ProjectsManagement.Controllers
 
             return ResultViewModel.Sucess(resultDTO.Message);
         }
+
         [HttpDelete]
         public async Task<ResultViewModel> UnassignUserFromTask(TaskUserViewModel taskUserViewModel)
         {
@@ -96,7 +93,8 @@ namespace ProjectsManagement.Controllers
             }
             return ResultViewModel.Sucess(result.Message);
         }
-        [HttpPut("UpdateTask/{taskId}")]
+
+        [HttpPut()]
         public async Task<ResultViewModel> UpdateTask(TaskUpdateViewModel taskUpdateViewModel)
         {
             var taskUpdateDTO = taskUpdateViewModel.MapOne<UpdateTaskDTO>();
@@ -107,7 +105,8 @@ namespace ProjectsManagement.Controllers
             }
             return ResultViewModel.Sucess(result.Message);
         }
-        [HttpDelete("DeleteTask/{taskId}")]
+
+        [HttpDelete("{taskId}")]
         public async Task<ResultViewModel> DeleteTask(int taskId)
         {
             var result = await _mediator.Send(new DeleteTaskCommand(taskId));

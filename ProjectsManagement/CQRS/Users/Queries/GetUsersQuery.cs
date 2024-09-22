@@ -9,14 +9,8 @@ using ProjectsManagement.Specification.UserSpecifications;
 namespace ProjectsManagement.CQRS.Users.Queries
 {
     public record GetUsersQuery(SpecParams specParams):IRequest<ResultDTO>;
-    public class UsersDTO
-    {
-        public string UserName { get; set; }
-        public UserStatus userStatus { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
-        public DateTime CreatedDate { get; set; }
-    }
+    public record UsersDTO(string UserName, UserStatus UserStatus, string PhoneNumber, string Email, DateTime CreatedDate);
+
     public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, ResultDTO>
     {
         private readonly IRepository<User> _userRepo;
@@ -30,13 +24,9 @@ namespace ProjectsManagement.CQRS.Users.Queries
             var spec = new UserWithSpecifications(request.specParams);
 
             var users = await _userRepo.GetAllWithSpecAsync(spec);
-            var useresDTOs = users.Select(user => new UsersDTO
-            {
-                UserName = user.UserName,
-                userStatus = user.UserStatus,
-                PhoneNumber = user.PhoneNumber,
-                Email = user.Email
-            }).ToList();
+
+            var useresDTOs = users.Select(user => new UsersDTO(user.UserName, user.UserStatus, user.PhoneNumber,user.Email, user.CreatedDate)).ToList();
+
             return ResultDTO.Sucess(useresDTOs);
 
         }
