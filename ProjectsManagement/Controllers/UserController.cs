@@ -1,8 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Helper;
+using ProjectManagementSystem.Repository.Specification;
+using ProjectsManagement.CQRS.Taskss.Queries;
 using ProjectsManagement.CQRS.Users.Commands;
 using ProjectsManagement.CQRS.Users.Orchestrators;
+using ProjectsManagement.CQRS.Users.Queries;
 using ProjectsManagement.DTOs;
 using ProjectsManagement.Helpers;
 using ProjectsManagement.Models;
@@ -95,7 +99,7 @@ namespace ProjectsManagement.Controllers
             return ResultViewModel.Sucess(result.Data, result.Message);
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<ResultViewModel> ChangePassword(ChangePasswordViewModel changePasswordViewModel)
         {
             var changePasswordDTO = changePasswordViewModel.MapOne<ChangePasswordDTO>();
@@ -108,6 +112,20 @@ namespace ProjectsManagement.Controllers
             }
 
             return ResultViewModel.Sucess(result.Message);
+        }
+        [HttpGet]
+        public async Task<ResultViewModel> GetUsers([FromQuery] SpecParams spec)
+        {
+            var resultDTO = await _mediator.Send(new GetUsersQuery(spec));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel.Faliure(resultDTO.Message);
+            }
+            var UserCount = await _mediator.Send(new GetCountUsersQuery(spec));
+            var paginationResult = new Pagination<UsersDTO>(spec.PageSize, spec.PageIndex, UserCount, resultDTO.Data);
+
+            return ResultViewModel.Sucess(paginationResult);
         }
     }
 }

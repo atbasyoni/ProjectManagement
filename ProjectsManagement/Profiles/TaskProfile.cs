@@ -14,6 +14,11 @@ namespace ProjectsManagement.Profiles
             CreateMap<TaskCreateDTO, Tasks>().ReverseMap();
 
             CreateMap<TaskDTO, Tasks>().ReverseMap();
+            CreateMap<TaskStatusViewModel, TaskStatusDTO>().ReverseMap();
+            CreateMap<TaskStatusDTO, Tasks>().ReverseMap();
+
+            CreateMap<TaskUpdateViewModel, UpdateTaskDTO>().ReverseMap();
+            CreateMap<UpdateTaskDTO, Tasks>().ReverseMap();
         }
     }
 }

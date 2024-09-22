@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectsManagement.Data;
 
@@ -11,9 +12,11 @@ using ProjectsManagement.Data;
 namespace ProjectsManagement.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240921221421_AddUserStatus")]
+    partial class AddUserStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,35 +24,6 @@ namespace ProjectsManagement.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ProjectsManagement.Models.BlockedUser", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("BlockedID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BlockerID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("BlockedID");
-
-                    b.HasIndex("BlockerID");
-
-                    b.ToTable("BlockedUser");
-                });
 
             modelBuilder.Entity("ProjectsManagement.Models.PasswordChangeRequest", b =>
                 {
@@ -288,9 +262,6 @@ namespace ProjectsManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsBlocked")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -361,25 +332,6 @@ namespace ProjectsManagement.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("UserRoles");
-                });
-
-            modelBuilder.Entity("ProjectsManagement.Models.BlockedUser", b =>
-                {
-                    b.HasOne("ProjectsManagement.Models.User", "Blocked")
-                        .WithMany("BlockedByUsers")
-                        .HasForeignKey("BlockedID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjectsManagement.Models.User", "Blocker")
-                        .WithMany("BlockedUsers")
-                        .HasForeignKey("BlockerID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Blocked");
-
-                    b.Navigation("Blocker");
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.PasswordChangeRequest", b =>
@@ -504,10 +456,6 @@ namespace ProjectsManagement.Migrations
 
             modelBuilder.Entity("ProjectsManagement.Models.User", b =>
                 {
-                    b.Navigation("BlockedByUsers");
-
-                    b.Navigation("BlockedUsers");
-
                     b.Navigation("OwnedProjects");
 
                     b.Navigation("PasswordChangeRequests");

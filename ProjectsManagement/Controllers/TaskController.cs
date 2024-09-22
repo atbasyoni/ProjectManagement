@@ -3,12 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Helper;
 using ProjectManagementSystem.Repository.Specification;
 using ProjectsManagement.CQRS.Projects.Queries;
+using ProjectsManagement.CQRS.ProjectUsers.Commands;
 using ProjectsManagement.CQRS.Taskss.Commands;
 using ProjectsManagement.CQRS.Taskss.Queries;
+using ProjectsManagement.CQRS.TaskUsers.Commands;
+using ProjectsManagement.DTOs;
 using ProjectsManagement.Helpers;
 using ProjectsManagement.Models;
 using ProjectsManagement.Repositories.Base;
 using ProjectsManagement.ViewModels;
+using ProjectsManagement.ViewModels.Projects;
 using ProjectsManagement.ViewModels.Taskss;
 
 namespace ProjectsManagement.Controllers
@@ -66,6 +70,52 @@ namespace ProjectsManagement.Controllers
             var paginationResult = new Pagination<TaskDTO>(spec.PageSize, spec.PageIndex, TaskCount, resultDTO.Data);
 
             return ResultViewModel.Sucess(paginationResult);
+        }
+        [HttpPost]
+        public async Task<ResultViewModel> AssignUserToTask(TaskUserViewModel taskUserViewModel)
+        {
+            var taskUserDTO = taskUserViewModel.MapOne<TaskUserDTO>();
+
+            var resultDTO = await _mediator.Send(new AssignUserToTaskCommand(taskUserDTO));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel.Sucess(resultDTO.Message);
+        }
+        [HttpDelete]
+        public async Task<ResultViewModel> UnassignUserFromTask(TaskUserViewModel taskUserViewModel)
+        {
+            var taskUserDTO = taskUserViewModel.MapOne<TaskUserDTO>();
+            var result = await _mediator.Send(new UnassignUserFromTaskCommand(taskUserDTO));
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+            return ResultViewModel.Sucess(result.Message);
+        }
+        [HttpPut("UpdateTask/{taskId}")]
+        public async Task<ResultViewModel> UpdateTask(TaskUpdateViewModel taskUpdateViewModel)
+        {
+            var taskUpdateDTO = taskUpdateViewModel.MapOne<UpdateTaskDTO>();
+            var result = await _mediator.Send(new UpdateTaskCommand(taskUpdateDTO));
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+            return ResultViewModel.Sucess(result.Message);
+        }
+        [HttpDelete("DeleteTask/{taskId}")]
+        public async Task<ResultViewModel> DeleteTask(int taskId)
+        {
+            var result = await _mediator.Send(new DeleteTaskCommand(taskId));
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+            return ResultViewModel.Sucess(result.Message);
         }
     }
 

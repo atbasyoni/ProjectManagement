@@ -70,5 +70,53 @@ namespace ProjectsManagement.Controllers
 
             return ResultViewModel.Sucess(resultDTO.Message);
         }
+        [HttpDelete]
+        public async Task<ResultViewModel> UnassignUserFromProject(AssignUserProjectViewModel assignUserViewModel)
+        {
+            var projectUserDTO = assignUserViewModel.MapOne<ProjectUserDTO>();
+
+            var result = await _mediator.Send(new UnassignUserFromProjectCommand(projectUserDTO));
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+            return ResultViewModel.Sucess(result.Message);
+        }
+        [HttpPut("EditProject/{projectId}")]
+        public async Task<ResultViewModel> EditProjectDetails(int ProjectID, ProjectCreateDTO projectCreateDTO)
+        {
+            var result = await _mediator.Send(new EditProjectCommand(ProjectID, projectCreateDTO));
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+            return ResultViewModel.Sucess(result.Message);
+        }
+
+        [HttpDelete("DeleteProject/{id}")]
+        public async Task<ResultViewModel> DeleteProject(int id)
+        {
+            var result = await _mediator.Send(new DeleteProjectCommand(id));
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+            return ResultViewModel.Sucess(result.Message);
+        }
+        [HttpPut]
+        public async Task<ResultViewModel> ChangeProjectStatus(ProjectStatusViewModel projectStatusViewModel)
+        {
+            var projectStatusDTO = projectStatusViewModel.MapOne<ProjectStatusDTO>();
+
+            var resultDTO = await _mediator.Send(new ChangeProjectStatusCommand(projectStatusDTO));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel.Sucess(resultDTO.Message);
+        }
+
     }
 }

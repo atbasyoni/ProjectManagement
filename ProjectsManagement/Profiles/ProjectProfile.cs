@@ -22,6 +22,9 @@ namespace ProjectsManagement.Profiles
 
             CreateMap<AssignUserProjectViewModel, ProjectUserDTO>().ReverseMap();
             CreateMap<ProjectUserDTO, ProjectUser>().ReverseMap();
+
+            CreateMap<ProjectStatusViewModel, ProjectStatusDTO>().ReverseMap();
+            CreateMap<ProjectStatusDTO, Project>().ReverseMap();
         }
     }
 }

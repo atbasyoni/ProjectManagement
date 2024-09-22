@@ -25,6 +25,7 @@ namespace ProjectsManagement.Data
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new PictureConfiguration());
+            modelBuilder.ApplyConfiguration(new BlockedUsersConfiguration());
         }
 
         public DbSet<User> Users { get; set; }
