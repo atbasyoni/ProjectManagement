@@ -20,7 +20,16 @@ namespace ProjectsManagement.CQRS.Taskss.Queries
 
         public async Task<ResultDTO> Handle(GetCompletedTasksQuery request, CancellationToken cancellationToken)
         {
-            var tasks = await _taskRepository.GetAll().Where(t=>t.ProjectID==request.projectID && t.TaskStatus== TasksStatus.Done).ToListAsync();
+            var tasks = await _taskRepository.GetAll()
+                .Where(t=>t.ProjectID==request.projectID && t.TaskStatus== TasksStatus.Done)
+                .Select(task => new TaskDTO
+                (
+                    task.Title,
+                    (TaskStatus)task.TaskStatus,
+                    task.AssignedUsers.Select(au => au.User.UserName).ToList(),
+                    task.Project.Title,
+                    task.CreatedDate
+                 )).ToListAsync();
 
             if (tasks is null)
             {
