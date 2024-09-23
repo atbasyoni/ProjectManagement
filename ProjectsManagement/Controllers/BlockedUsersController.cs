@@ -16,8 +16,7 @@ namespace ProjectsManagement.Controllers
             _mediator = mediator;
         }
 
-
-        [HttpPost]
+        [HttpPost("block")]
         public async Task<ResultViewModel> BlockUser(int BlockedID)
         {
             var result = await _mediator.Send(new BlockUserCommand(BlockedID));

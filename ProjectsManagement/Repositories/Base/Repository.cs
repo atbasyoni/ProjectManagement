@@ -102,5 +102,10 @@ namespace ProjectsManagement.Repositories.Base
         {
             return await ApplySpecification(Spec).Where(x => x.IsDeleted == false).ToListAsync();
         }
+
+        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _context.Set<T>().Where(predicate).ToListAsync();
+        }
     }
 }

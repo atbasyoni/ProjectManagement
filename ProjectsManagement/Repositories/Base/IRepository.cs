@@ -22,5 +22,6 @@ namespace ProjectsManagement.Repositories.Base
         Task<T> FirstAsyncWithTracking(Expression<Func<T, bool>> predicate);
         Task<int> CountAsync(Expression<Func<T, bool>> predicate);
         Task<int> GetCountWithSpecAsync(ISpecification<T> Spec);
+        Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate);
     }
 }
