@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Helper;
 using ProjectManagementSystem.Repository.Specification;
 using ProjectsManagement.CQRS.Taskss.Commands;
+using ProjectsManagement.CQRS.Taskss.Orchestrators;
 using ProjectsManagement.CQRS.Taskss.Queries;
 using ProjectsManagement.CQRS.TaskUsers.Commands;
 using ProjectsManagement.Helpers;
@@ -110,6 +111,28 @@ namespace ProjectsManagement.Controllers
         public async Task<ResultViewModel> DeleteTask(int taskId)
         {
             var result = await _mediator.Send(new DeleteTaskCommand(taskId));
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+            return ResultViewModel.Sucess(result.Message);
+        }
+
+        [HttpGet]
+        public async Task<ResultViewModel> GetTasksByStatusV1(int projectID)
+        {
+            var result = await _mediator.Send(new GetTasksByStatusOrchestrator(projectID));
+            if (!result.IsSuccess)
+            {
+                return ResultViewModel.Faliure(result.Message);
+            }
+            return ResultViewModel.Sucess(result.Message);
+        }
+        
+        [HttpGet]
+        public async Task<ResultViewModel> GetTasksByStatusV2(int projectID)
+        {
+            var result = await _mediator.Send(new GetAllTasksByStatusQuery(projectID));
             if (!result.IsSuccess)
             {
                 return ResultViewModel.Faliure(result.Message);

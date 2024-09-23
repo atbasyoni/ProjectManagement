@@ -7,7 +7,7 @@ using ProjectsManagement.Repositories.Base;
 
 namespace ProjectsManagement.CQRS.Taskss.Queries
 {
-   
+    
     public record GetToDoTasksQuery(int projectID) : IRequest<ResultDTO>;
 
     public class GetToDoTasksQueryHandler : IRequestHandler<GetToDoTasksQuery, ResultDTO>
@@ -21,7 +21,16 @@ namespace ProjectsManagement.CQRS.Taskss.Queries
 
         public async Task<ResultDTO> Handle(GetToDoTasksQuery request, CancellationToken cancellationToken)
         {
-            var tasks = await _taskRepository.GetAll().Where(t => t.ProjectID == request.projectID && t.TaskStatus == TasksStatus.ToDo).ToListAsync();
+            var tasks = await _taskRepository.GetAll()
+                .Where(t => t.ProjectID == request.projectID && t.TaskStatus == TasksStatus.ToDo)
+                .Select(task => new TaskDTO
+                (
+                    task.Title,
+                    (TaskStatus)task.TaskStatus,
+                    task.AssignedUsers.Select(au => au.User.UserName).ToList(),
+                    task.Project.Title,
+                    task.CreatedDate
+                 )).ToListAsync();
 
             if (tasks is null)
             {
