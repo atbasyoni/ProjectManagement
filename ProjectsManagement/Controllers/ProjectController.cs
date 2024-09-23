@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Helper;
 using ProjectManagementSystem.Repository.Specification;
 using ProjectsManagement.CQRS.Projects.Commands;
 using ProjectsManagement.CQRS.Projects.Queries;
 using ProjectsManagement.CQRS.ProjectUsers.Commands;
+using ProjectsManagement.DTOs;
 using ProjectsManagement.Helpers;
+using ProjectsManagement.Middleware;
 using ProjectsManagement.Models;
 using ProjectsManagement.ViewModels;
 using ProjectsManagement.ViewModels.Projects;
@@ -20,6 +25,7 @@ namespace ProjectsManagement.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ResultViewModel> AddProject(ProjectCreateViewModel projectCreateViewModel)
         {
@@ -44,7 +50,6 @@ namespace ProjectsManagement.Controllers
             {
                 return ResultViewModel.Faliure(resultDTO.Message);
             }
-
             var projectCount = await _mediator.Send(new GetProjectsCountQuery(spec));
             var paginationResult = new Pagination<ProjectDTO>(spec.PageSize, spec.PageIndex, projectCount, resultDTO.Data);
 
@@ -65,48 +70,39 @@ namespace ProjectsManagement.Controllers
 
             return ResultViewModel.Sucess(resultDTO.Message);
         }
-
         [HttpDelete]
         public async Task<ResultViewModel> UnassignUserFromProject(AssignUserProjectViewModel assignUserViewModel)
         {
             var projectUserDTO = assignUserViewModel.MapOne<ProjectUserDTO>();
 
             var result = await _mediator.Send(new UnassignUserFromProjectCommand(projectUserDTO));
-
             if (!result.IsSuccess)
             {
                 return ResultViewModel.Faliure(result.Message);
             }
-
             return ResultViewModel.Sucess(result.Message);
         }
-
-        [HttpPut("{ProjectID}")]
+        [HttpPut("EditProject/{projectId}")]
         public async Task<ResultViewModel> EditProjectDetails(int ProjectID, ProjectCreateDTO projectCreateDTO)
         {
             var result = await _mediator.Send(new EditProjectCommand(ProjectID, projectCreateDTO));
-
             if (!result.IsSuccess)
             {
                 return ResultViewModel.Faliure(result.Message);
             }
-
             return ResultViewModel.Sucess(result.Message);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteProject/{id}")]
         public async Task<ResultViewModel> DeleteProject(int id)
         {
             var result = await _mediator.Send(new DeleteProjectCommand(id));
-
             if (!result.IsSuccess)
             {
                 return ResultViewModel.Faliure(result.Message);
             }
-
             return ResultViewModel.Sucess(result.Message);
         }
-
         [HttpPut]
         public async Task<ResultViewModel> ChangeProjectStatus(ProjectStatusViewModel projectStatusViewModel)
         {
@@ -119,6 +115,16 @@ namespace ProjectsManagement.Controllers
                 return ResultViewModel.Faliure(resultDTO.Message);
             }
 
+            return ResultViewModel.Sucess(resultDTO.Message);
+        }
+        [HttpGet]
+        public async Task<ResultViewModel>GetProjectById(int ProjectId)
+        {
+            var resultDTO = await _mediator.Send(new GetProjectByIdQuery(ProjectId));
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel.Faliure(resultDTO.Message);
+            }
             return ResultViewModel.Sucess(resultDTO.Message);
         }
 

@@ -1,11 +1,16 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Helper;
 using ProjectManagementSystem.Repository.Specification;
+using ProjectsManagement.CQRS.Taskss.Queries;
 using ProjectsManagement.CQRS.Users.Commands;
 using ProjectsManagement.CQRS.Users.Orchestrators;
 using ProjectsManagement.CQRS.Users.Queries;
+using ProjectsManagement.DTOs;
+using ProjectsManagement.Enums;
 using ProjectsManagement.Helpers;
+using ProjectsManagement.Models;
 using ProjectsManagement.ViewModels;
 using ProjectsManagement.ViewModels.Auth;
 
@@ -109,7 +114,6 @@ namespace ProjectsManagement.Controllers
 
             return ResultViewModel.Sucess(result.Message);
         }
-
         [HttpGet]
         public async Task<ResultViewModel> GetUsers([FromQuery] SpecParams spec)
         {
@@ -119,11 +123,24 @@ namespace ProjectsManagement.Controllers
             {
                 return ResultViewModel.Faliure(resultDTO.Message);
             }
-
             var UserCount = await _mediator.Send(new GetCountUsersQuery(spec));
             var paginationResult = new Pagination<UsersDTO>(spec.PageSize, spec.PageIndex, UserCount, resultDTO.Data);
 
             return ResultViewModel.Sucess(paginationResult);
         }
+        [HttpPut]
+        public async Task<ResultViewModel> ChangeUserStatus(int UserId, UserStatus Status)
+        {
+
+            var resultDTO = await _mediator.Send(new ChangeUserStatusCommand(UserId,Status));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel.Sucess(resultDTO.Message);
+        }
+
     }
 }
