@@ -11,6 +11,7 @@ namespace ProjectsManagement.Repositories.Base
         Task<T> GetByIDAsync(int id);
         IQueryable<T> GetAllPagination(int pageNumber, int pageSize);
         Task<IEnumerable<T>> GetAllWithSpecAsync(ISpecification<T> Spec);
+        IQueryable<T> GetAll(Expression<Func<T, bool>> predicate, string[] includes = null);
         Task<T> AddAsync(T entity);
         Task AddRangeAsync(List<T> entities);
         Task<T> UpdateAsync(T entity);

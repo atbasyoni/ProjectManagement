@@ -14,6 +14,8 @@ using System.Reflection;
 using Autofac.Core;
 using Microsoft.Extensions.Configuration;
 using Hangfire;
+using Serilog.Sinks.MSSqlServer;
+using Serilog;
 
 namespace ProjectsManagement
 {
@@ -105,7 +107,23 @@ namespace ProjectsManagement
                  cfg.UseSqlServerStorage(builder.Configuration.GetConnectionString("Default")));
             builder.Services.AddHangfireServer();
 
+            //configureSettingsForSerilog
+            builder.Logging.ClearProviders();
+
+            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration)
+                .Enrich.WithMachineName()
+                .Enrich.WithThreadId()
+                .WriteTo.Console()
+                .WriteTo.MSSqlServer(connectionString: configuration.GetConnectionString("Default"),
+                    sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true })
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
+
             var app = builder.Build();
+
             app.UseHangfireDashboard("/hangfire");
             app.UseHangfireServer();
 

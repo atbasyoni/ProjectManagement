@@ -22,14 +22,14 @@ namespace ProjectsManagement.CQRS.Taskss.Queries
         {
             var tasks = await _taskRepository.GetAll()
                 .Where(t=>t.ProjectID==request.projectID && t.TaskStatus== TasksStatus.Done)
-                .Select(task => new TaskDTO
-                (
-                    task.Title,
-                    (TaskStatus)task.TaskStatus,
-                    task.AssignedUsers.Select(au => au.User.UserName).ToList(),
-                    task.Project.Title,
-                    task.CreatedDate
-                 )).ToListAsync();
+                .Select(task => new TaskDTO()
+                {
+                    Title = task.Title,
+                    TaskStatus = (TaskStatus)task.TaskStatus,
+                    UserNames = task.AssignedUsers.Select(au => au.User.UserName).ToList(),
+                    ProjectName = task.Project.Title,
+                    CreatedDate = task.CreatedDate
+                }).ToListAsync();
 
             if (tasks is null)
             {

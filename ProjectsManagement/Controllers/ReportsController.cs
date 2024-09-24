@@ -2,20 +2,20 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectsManagement.CQRS.Reports.Queries;
+using ProjectsManagement.Models;
 using ProjectsManagement.ViewModels;
 
 namespace ProjectsManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReportsController : ControllerBase
+    public class ReportsController : BaseController
     {
-        private readonly IMediator _mediator;
-
-        ReportsController(IMediator mediator)
+        public ReportsController(ControllereParameters controllereParameters) : base(controllereParameters)
         {
-            _mediator = mediator;
+
         }
+
         [HttpGet("user-tasks-report")]
         public async Task<ActionResult<ResultViewModel>> GetUserTaskProgress()
         {

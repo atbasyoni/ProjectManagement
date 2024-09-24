@@ -28,7 +28,7 @@ namespace ProjectsManagement.Controllers
         {
             var taskCreateDTO = taskCreateViewModel.MapOne<TaskCreateDTO>();
 
-            var resultDTO = await _mediator.Send(new AddTaskCommand(taskCreateDTO));
+            var resultDTO = await _mediator.Send(new AddTaskOrchestrator(taskCreateDTO));
 
             if (!resultDTO.IsSuccess)
             {

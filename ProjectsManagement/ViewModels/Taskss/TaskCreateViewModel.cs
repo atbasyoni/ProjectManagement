@@ -7,6 +7,6 @@
         public DateTime StartDate { get; set; }
         public DateTime DueDate { get; set; }
         public int ProjectID { get; set; }
-        public List<int> UserIDs { get; set; }
+        public List<int>? UserIDs { get; set; }
     }
 }

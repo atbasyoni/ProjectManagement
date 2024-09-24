@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProjectsManagement.DTOs;
 using ProjectsManagement.Enums;
 using ProjectsManagement.Models;
@@ -22,7 +23,7 @@ namespace ProjectsManagement.CQRS.Reports.Queries
         public async Task<ResultDTO> Handle(GetUserTaskProgressQuery request, CancellationToken cancellationToken)
         {
             var userID = int.Parse(_userState.ID);
-            var userTasks = await _taskUserRepository.ListAsync(tu => tu.UserID == userID);
+            var userTasks = await _taskUserRepository.GetAll(tu => tu.UserID == userID, ["Task"]).ToListAsync();
             var totalTasks = userTasks.Count();
             var completedTasks = userTasks.Count(tu => tu.Task.TaskStatus == TasksStatus.Done);
             var progress = totalTasks > 0 ? ((double)completedTasks / totalTasks) * 100 : 0;

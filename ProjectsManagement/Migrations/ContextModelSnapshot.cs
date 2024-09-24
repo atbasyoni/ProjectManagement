@@ -63,7 +63,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasIndex("BlockerID");
 
-                    b.ToTable("BlockedUser");
+                    b.ToTable("BlockedUser", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.PasswordChangeRequest", b =>
@@ -109,7 +109,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("PasswordChanges");
+                    b.ToTable("PasswordChanges", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.Picture", b =>
@@ -151,7 +151,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Pictures");
+                    b.ToTable("Pictures", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.Project", b =>
@@ -201,7 +201,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasIndex("OwnerID");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.ProjectUser", b =>
@@ -245,7 +245,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("ProjectUsers");
+                    b.ToTable("ProjectUsers", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.Role", b =>
@@ -283,7 +283,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.TaskUser", b =>
@@ -327,7 +327,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("TaskUsers");
+                    b.ToTable("TaskUsers", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.Tasks", b =>
@@ -383,7 +383,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasIndex("ProjectID");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.User", b =>
@@ -466,7 +466,7 @@ namespace ProjectsManagement.Migrations
                         .IsUnique()
                         .HasFilter("[PictureID] IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.UserRole", b =>
@@ -510,7 +510,7 @@ namespace ProjectsManagement.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("ProjectsManagement.Models.BlockedUser", b =>

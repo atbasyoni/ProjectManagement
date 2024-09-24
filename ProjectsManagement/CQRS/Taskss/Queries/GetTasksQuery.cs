@@ -9,7 +9,14 @@ namespace ProjectsManagement.CQRS.Taskss.Queries
 {
     public record GetTasksQuery(SpecParams specParams) : IRequest<ResultDTO>;
 
-    public record TaskDTO(string Title, TaskStatus TaskStatus, List<string> UserNames, string ProjectName, DateTime CreatedDate);
+    public class TaskDTO
+    {
+        public string Title { get; set; }
+        public TaskStatus TaskStatus { get; set; }
+        public List<string> UserNames { get; set; }
+        public string ProjectName { get; set; }
+        public DateTime CreatedDate { get; set; }
+    }
 
     public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, ResultDTO>
     {
@@ -26,14 +33,14 @@ namespace ProjectsManagement.CQRS.Taskss.Queries
 
             var tasks = await _taskRepository.GetAllWithSpecAsync(spec);
 
-            var taskDTOs = tasks.Select(task => new TaskDTO
-            (
-                task.Title,
-                (TaskStatus) task.TaskStatus,
-                task.AssignedUsers.Select(au => au.User.UserName).ToList(),
-                task.Project.Title,
-                task.CreatedDate
-            )).ToList();
+            var taskDTOs = tasks.Select(task => new TaskDTO()
+            {
+                Title = task.Title,
+                TaskStatus = (TaskStatus)task.TaskStatus,
+                UserNames = task.AssignedUsers.Select(au => au.User.UserName).ToList(),
+                ProjectName = task.Project.Title,
+                CreatedDate = task.CreatedDate
+            }).ToList();
 
 
             return ResultDTO.Sucess(taskDTOs);

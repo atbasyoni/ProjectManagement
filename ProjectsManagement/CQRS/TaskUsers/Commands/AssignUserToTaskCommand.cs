@@ -11,7 +11,11 @@ namespace ProjectsManagement.CQRS.TaskUsers.Commands
 {
     public record AssignUserToTaskCommand(TaskUserDTO taskUserDTO) : IRequest<ResultDTO>;
 
-    public record TaskUserDTO(int taskID, int userID);
+    public class TaskUserDTO
+    {
+        public int taskID { get; set; }
+        public int userID { get; set; }
+    }
 
     public class AssignUserToTaskCommandHandler : IRequestHandler<AssignUserToTaskCommand, ResultDTO>
     {

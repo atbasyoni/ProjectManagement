@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ProjectsManagement.CQRS.Taskss.Commands;
 using ProjectsManagement.CQRS.Taskss.Queries;
+using ProjectsManagement.CQRS.TaskUsers.Commands;
 using ProjectsManagement.Models;
 using ProjectsManagement.ViewModels.Taskss;
 
@@ -19,6 +20,8 @@ namespace ProjectsManagement.Profiles
 
             CreateMap<TaskUpdateViewModel, UpdateTaskDTO>().ReverseMap();
             CreateMap<UpdateTaskDTO, Tasks>().ReverseMap();
+
+            CreateMap<TaskUserDTO, TaskUser>().ReverseMap();
         }
     }
 }

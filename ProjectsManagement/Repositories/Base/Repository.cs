@@ -3,6 +3,7 @@ using ProjectsManagement.Data;
 using ProjectsManagement.Models;
 using ProjectsManagement.Specification;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace ProjectsManagement.Repositories.Base
@@ -73,6 +74,17 @@ namespace ProjectsManagement.Repositories.Base
         public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate)
         {
             return GetAll().Where(predicate);
+        }
+
+        public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate, string[] includes = null)
+        {
+            var query = GetAll().Where(predicate);
+
+            if (includes != null)
+                foreach (var incluse in includes)
+                    query = query.Include(incluse);
+
+            return query;
         }
 
         public async Task<T> FirstAsync(Expression<Func<T, bool>> predicate)
