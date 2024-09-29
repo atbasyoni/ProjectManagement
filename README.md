@@ -14,11 +14,13 @@
 Project Management System built with ASP.NET Core designed to handle project tasks, assignments, and user collaboration. This system is similar to tools like Trello, focusing on task assignments, user roles, and real-time collaboration.
 
 ## Architecture
-The system is designed using a layered architecture:
-- **Repository Layer**: Handles data access using Entity Framework Core.
-- **Service Layer**: Business logic.
-- **Mediator Layer**: Acts as a communication bridge between controllers and services.
-- **Controller Layer**: Handles HTTP requests and sends responses.
+The system is designed using the CQRS (Command Query Responsibility Segregation) and MediatR patterns to separate write and read operations, promoting scalability and maintainability:
+- **Command Layer**: Handles write operations, such as creating, updating, and deleting resources.
+- **Query Layer**: Handles read operations, focusing on fetching data efficiently.
+- **MediatR Layer**: Acts as a communication bridge between commands/queries and handlers, enabling clean and decoupled code.
+- **Handler Layer**: Contains the business logic, handling requests coming from the MediatR layer. Each command or query has its dedicated handler.
+- **Repository Layer**: Manages data access, typically interacting with the database using Entity Framework Core.
+- **Controller Layer**: Handles incoming HTTP requests and directs them to the appropriate command/query via MediatR.
 
 ## Modules
 - **Projects**: Create and manage projects.
@@ -62,7 +64,7 @@ The system is designed using a layered architecture:
     dotnet restore
 3. Configure the database connection string in appsettings.json:
     ```bash
-    Server=.;Database=ProjectsManagement; Trusted_Connection= True; TrustServerCertificate= True;encrypt=false
+    Server=.;Database=ProjectManagement; Trusted_Connection= True; TrustServerCertificate= True;encrypt=false
     
 ## Database Migration
 - Run the following command to apply the latest database migrations:
