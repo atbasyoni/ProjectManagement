@@ -26,11 +26,19 @@ The system is designed using a layered architecture:
 - **User Management**: Role-based access control.
 
 ## Features
+- **CQRS Pattern**: Separates write and query operations, making the system more scalable and easier to maintain.
+- **Mediator Pattern**: Facilitates communication between classes without direct references, improving code flexibility.
 - **User Authentication and Authorization**: Secure access with role-based control.
+- **Confirmation Email System**: Sends confirmation emails with account activation links.
+- **Reset Password System**: Encrypts and decrypts reset password codes sent via email.
+- **Role-based Permissions**: Users can be assigned different roles with specific access levels.
 - **Task Assignment**: Assign users to tasks within projects.
 - **Real-time Notifications**: Users receive notifications for task updates and assignments.
 - **Task Status Tracking**: Track task progress through various stages.
-- **Role-based Permissions**: Users can be assigned different roles with specific access levels.
+- **Pagination Schema**: Efficiently organizes large responses.
+- **Readable Response Schema**: Provides detailed response structures with status codes, operation status, data, and metadata.
+- **Dependency Injection**: Manages dependencies efficiently.
+- **SOLID Principles**: Follows SOLID principles for robust and maintainable code.
 
 ## Technologies
 - **ASP.NET Core 8**: The main framework for building the Web API.
@@ -42,6 +50,7 @@ The system is designed using a layered architecture:
 - **Serilog**: Provides structured logging and application diagnostics.
 - **SQL Server**: Database management.
 - **Swagger**: Automatically generates API documentation.
+- **Fluent Validation**: Provides an easy way to set up validations with custom error handling.
 
 ## Setup and Installation
 1. Clone the repository:
